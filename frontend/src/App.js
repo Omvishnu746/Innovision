@@ -46,7 +46,8 @@ function App() {
   };
 
   const handleProfileSaved = () => {
-    // For now, simulate that profile is saved
+    // Simulate that profile is saved
+    setUserProfile({ email: userEmail, skills: [] });
     setCurrentPage("recommendations");
   };
 

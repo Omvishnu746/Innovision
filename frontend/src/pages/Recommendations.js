@@ -10,9 +10,9 @@ function Recommendations({ userEmail }) {
 
   // Filter internships for user's skills as a demonstration
   let filteredInternships = internshipsData;
-  if (userProfile) {
+  if (userProfile && userProfile.skills) {
     filteredInternships = internshipsData.filter((internship) =>
-      internship.skills_required.some((skill) =>
+      internship.skills_required?.some((skill) =>
         userProfile.skills.map((s) => s.toLowerCase()).includes(skill.toLowerCase())
       )
     );
@@ -42,12 +42,12 @@ function Recommendations({ userEmail }) {
           <p><strong>Location:</strong> {internship.location}</p>
           <p><em>Skills Required:</em> {internship.skills_required.join(", ")}</p>
           <p><em>Sector:</em> {internship.sector}</p>
-          {userProfile && (
+          {userProfile && userProfile.skills && (
             <p>
               <em>
                 Match:{" "}
                 {internship.skills_required
-                  .filter((skill) =>
+                  ?.filter((skill) =>
                     userProfile.skills.map((s) => s.toLowerCase()).includes(skill.toLowerCase())
                   )
                   .join(", ") || "No skill match"}

@@ -18,7 +18,7 @@ function Login({ onLoginClick, onSwitchToSignup }) {
       setError("User not found. Please register.");
       return;
     }
-    if (user.password !== password) {
+    if (user.password && user.password !== password) {
       setError("Incorrect password.");
       return;
     }
