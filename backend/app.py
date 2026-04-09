@@ -1,16 +1,33 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from pymongo import MongoClient
+import os
+import json
+import mongomock
 from ai_ml.advanced_recommender import AdvancedRecommender
 
 # Flask app
 app = Flask(__name__)
 CORS(app)
 
-# MongoDB connection
-MONGO_URI = "mongodb+srv://Teamuser:Team1234@pm-cluster.ezvd3su.mongodb.net/pm_internship"
-client = MongoClient(MONGO_URI)
+# MongoDB connection mocked
+client = mongomock.MongoClient()
 db = client["pm_internship"]
+
+def seed_mock_db():
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    try:
+        with open(os.path.join(base_dir, "Student.json"), "r") as f:
+            students = json.load(f)
+            db["student"].insert_many(students)
+            db["Student"].insert_many(students)
+        with open(os.path.join(base_dir, "Internships.json"), "r") as f:
+            internships = json.load(f)
+            db["internships"].insert_many(internships)
+        print("Mock Database Seeded Successfully.")
+    except Exception as e:
+        print(f"Mock DB Seed Warning: {e}")
+
+seed_mock_db()
 
 # Initialize recommender globally
 recommender = AdvancedRecommender(db=db)

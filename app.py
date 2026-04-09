@@ -1,19 +1,30 @@
 # app.py
 import os
+import json
 from flask import Flask, jsonify, request
-from pymongo import MongoClient
+import mongomock
 
 app = Flask(__name__)
 
-# Option A (direct - shared): full URI here
-MONGO_URI = "mongodb+srv://Teamuser:Team1234@pm-cluster.ezvd3su.mongodb.net/pm_internship"
-
-# Option B (env var) Uncomment & use .env for privacy
-# MONGO_URI = os.getenv("MONGO_URI")
-
-client = MongoClient(MONGO_URI)
+# DB Mock to bypass Atlas connection issues
+client = mongomock.MongoClient()
 db = client["pm_internship"]
 
+def seed_mock_db():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    try:
+        with open(os.path.join(base_dir, "Student.json"), "r") as f:
+            students = json.load(f)
+            db["student"].insert_many(students)
+            db["Student"].insert_many(students)
+        with open(os.path.join(base_dir, "Internships.json"), "r") as f:
+            internships = json.load(f)
+            db["internships"].insert_many(internships)
+        print("Mock Database Seeded Successfully.")
+    except Exception as e:
+        print(f"Mock DB Seed Warning: {e}")
+
+seed_mock_db()
 # --- ROUTES ---
 
 @app.route("/students", methods=["GET"])
